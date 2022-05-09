@@ -609,7 +609,7 @@ float dist(float &x1, float &y1, float &x2, float &y2)
     return dist;
 }
 
-float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand, int num_of_vehicles)
+float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand, int num_of_vehicles, int num_of_vertices)
 {
     float sum = 0;
     int counter = 0;
@@ -630,6 +630,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     //START
     visited[0] = 1;
     int road[adj.size()];
+    int external = 0;
  
     // Traverse the adjacency
     while (i < adj.size() && j < adj[i].size())
@@ -639,6 +640,10 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
         if (counter >= adj[i].size() - 1)
         {
             break;
+        }
+        if (external == num_of_vertices - 1) //now we only need the vehicles
+        {
+            break;external++;
         }
  
         //PATH unvisited and min distance
@@ -651,6 +656,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
                 {
                     min = adj[i][j];
                     road[counter] = j + 1;
+                    
                 }
                 else //we have to go back home
                 {
@@ -658,7 +664,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
                     road[counter] = nextmarked + 1;
                     nextmarked++;
                     cur_cap = 0;
-                    break; //jmsmsmsms
+                    j = adj[i].size();
                 }
             
             }
@@ -678,6 +684,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             i = road[counter] - 1;
             counter++;
         }
+        cout<<i<<" "<< j<<endl;
         
     }
     
@@ -700,144 +707,214 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
 
 
 
-int main() {
+//int main() {
+//
+//    ofstream data;
+//    data.open ("my_data.txt");
+//    data << "Test"<< "          "<<"MVS"<< "          "<<"VMM"<<"          "<<"Deviation (%)\n";
+//    //10 spaces
+//
+//    std::ifstream MV_data("tsp_MV.txt");
+//
+//    string name;
+//    float res;
+//    float my_res = 0;
+//
+//    int file_counter = 0;
+//    for(std::string line; getline( MV_data, line );)
+//    {
+//        int num_of_points;
+//        int num_of_vehicles;
+//        int capacity;
+//
+//
+//        if(file_counter%2 == 0) //even -- string
+//        {
+//            name = line;
+//            name.pop_back();
+//            data<<line<<" ";
+//
+//            std::ifstream input;
+//            input.open (name, std::ifstream::in);
+//            if (!input.is_open())
+//            {
+//                    cerr << "Could not open the file - '"
+//                         << name << "'" << endl;
+//                    return EXIT_FAILURE;
+//            }
+//
+//            input>>num_of_points;
+//            input>>num_of_vehicles;
+//            input>>capacity;
+//
+//            if (num_of_points<51) //THIS CYCLE
+//            {
+//                cout<<name<<endl;
+//
+//                float x,y, zero;
+//                int d;
+//                input>>zero;
+//                input>> x;
+//                input>> y;
+//
+//                vector< pair<float,float> > points;
+//
+//                vector<int> demand;
+//                points.push_back(pair<float, float> (x,y));
+//                demand.push_back(0);
+//                for(int i = 0; i<num_of_vehicles-1; i++)
+//                {
+//                    points.push_back(pair<float, float> (x,y));
+//                    demand.push_back(0);
+//                }
+//
+//                for(int i = 0; i<num_of_points-1;i++)
+//                {
+//                    input>> x;
+//                    input>> y;
+//                    input>>d;
+//                    points.push_back(pair<float, float> (x,y));
+//                    demand.push_back(d);
+//                }
+//
+//
+//                vector< vector<float> > adj(num_of_points+num_of_vehicles-1, vector<float>(num_of_points+num_of_vehicles-1));
+//
+//                for (int i = 0; i<(num_of_points+num_of_vehicles-1); i++)
+//                {
+//                    for(int j = i; j<(num_of_points+num_of_vehicles-1); j++)
+//                    {
+//                        if (i == j)
+//                        {
+//                            adj[i][j] = -1;
+//                        }
+//                        if (i<num_of_vehicles && j< num_of_vehicles && i!= j)
+//                        {
+//                            adj[i][j] = INT_MAX;
+//                            adj[j][i] = adj[i][j];
+//
+//                        }
+//                        else
+//                        {
+//                            adj[i][j] = dist(points[i].first, points[i].second, points[j].first, points[j].second);
+//                            adj[j][i] = adj[i][j];
+//                        }
+//
+//
+//                    }
+//                }
+//
+//                float distance = tsp_modified(adj, capacity, demand, num_of_vehicles);
+//                my_res = distance;
+//
+//            } //ENDS here
+//
+//            input.close();
+//        }
+//
+//        else //odd -- number
+//        {
+//            res = stof(line);
+//            if (num_of_points>=51)
+//            {
+//                float lo = res*0.11;
+//                float inc = lo + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(res*0.2-lo)));
+//                my_res = res + inc;
+//                //res + res*0.18 +rand()%2;
+//            }
+//            data<<line<<"         ";
+//            data<<my_res<<"         ";
+//
+//            float dev = (my_res - res)/res * 100;
+//            data<<dev;
+//            data <<"\n";
+//        }
+//
+//
+//
+//        file_counter++;
+//
+//    }
+//
+//    data.close();
+//    cout<<"nice"<<endl;
+//
+//    return 0;
+//}
 
-    ofstream data;
-    data.open ("my_data.txt");
-    data << "Test"<< "          "<<"MVS"<< "          "<<"VMM"<<"          "<<"Deviation (%)\n";
-    //10 spaces
-
-    std::ifstream MV_data("transport_MV.txt");
-    if (!MV_data.is_open())
-    {
-            cerr << "Could not open the file"<< endl;
-            return EXIT_FAILURE;
-    }
+int main(){
+    int num_of_points;
+            int num_of_vehicles;
+            int capacity;
+    cin>>num_of_points;
+    cin>>num_of_vehicles;
+    cin>>capacity;
     
-    string name;
-    float res;
-    float my_res = 0;
-
-    int file_counter = 0;
-    for(std::string line; getline( MV_data, line );)
+    if (num_of_points<51) //THIS CYCLE
     {
-        int num_of_points;
-        int num_of_vehicles;
-        int capacity;
-
-        if(file_counter%2 == 0) //even -- string
+       
+        
+        float x,y, zero;
+        int d;
+        cin>>zero;
+        cin>> x;
+        cin>> y;
+    
+        vector< pair<float,float> > points;
+        
+        vector<int> demand;
+        points.push_back(pair<float, float> (x,y));
+        demand.push_back(0);
+        for(int i = 0; i<num_of_vehicles-1; i++)
         {
-            name = line;
-            name.erase(name.begin());
-            name.pop_back();
-            name.pop_back();
-            data<<line<<" ";
-
-            std::ifstream input;
-            input.open (name, std::ifstream::in);
-            if (!input.is_open())
-            {
-                    cerr << "Could not open the file - '"
-                         << name << "'" << endl;
-                    return EXIT_FAILURE;
-            }
-
-            input>>num_of_points;
-            input>>num_of_vehicles;
-            input>>capacity;
-
-            if (num_of_points<51) //THIS CYCLE
-            {
-                cout<<name<<endl;
-
-                float x,y, zero;
-                int d;
-                input>>zero;
-                input>> x;
-                input>> y;
-
-                vector< pair<float,float> > points;
-
-                vector<int> demand;
-                points.push_back(pair<float, float> (x,y));
-                demand.push_back(0);
-                for(int i = 0; i<num_of_vehicles-1; i++)
-                {
-                    points.push_back(pair<float, float> (x,y));
-                    demand.push_back(0);
-                }
-
-                for(int i = 0; i<num_of_points-1;i++)
-                {
-                    input>> x;
-                    input>> y;
-                    input>>d;
-                    points.push_back(pair<float, float> (x,y));
-                    demand.push_back(d);
-                }
-
-
-                vector< vector<float> > adj(num_of_points+num_of_vehicles-1, vector<float>(num_of_points+num_of_vehicles-1));
-
-                for (int i = 0; i<(num_of_points+num_of_vehicles-1); i++)
-                {
-                    for(int j = i; j<(num_of_points+num_of_vehicles-1); j++)
-                    {
-                        if (i == j)
-                        {
-                            adj[i][j] = -1;
-                        }
-                        if (i<num_of_vehicles && j< num_of_vehicles && i!= j)
-                        {
-                            adj[i][j] = INT_MAX;
-                            adj[j][i] = adj[i][j];
-
-                        }
-                        else
-                        {
-                            adj[i][j] = dist(points[i].first, points[i].second, points[j].first, points[j].second);
-                            adj[j][i] = adj[i][j];
-                        }
-
-
-                    }
-                }
-
-                float distance = tsp_modified(adj, capacity, demand, num_of_vehicles);
-                my_res = distance;
-
-            } //ENDS here
-
-            input.close();
+            points.push_back(pair<float, float> (x,y));
+            demand.push_back(0);
         }
-
-        else //odd -- number
+        
+        for(int i = 0; i<num_of_points-1;i++)
         {
-            res = stof(line);
-            if (num_of_points>=51)
-            {
-                float lo = res*0.11;
-                float inc = lo + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(res*0.2-lo)));
-                my_res = res + inc;
-                //res + res*0.18 +rand()%2;
-            }
-            data<<line<<"         ";
-            data<<my_res<<"         ";
-
-            float dev = (my_res - res)/res * 100;
-            data<<dev;
-            data <<"\n";
+            cin>> x;
+            cin>> y;
+            cin>>d;
+            points.push_back(pair<float, float> (x,y));
+            demand.push_back(d);
         }
-
-
-
-        file_counter++;
-
-    }
-
-    data.close();
-    cout<<"nice"<<endl;
-
-    return 0;
+    
+        
+        vector< vector<float> > adj(num_of_points+num_of_vehicles-1, vector<float>(num_of_points+num_of_vehicles-1));
+        
+        for (int i = 0; i<(num_of_points+num_of_vehicles-1); i++)
+        {
+            for(int j = i; j<(num_of_points+num_of_vehicles-1); j++)
+            {
+                adj[i][j] = dist(points[i].first, points[i].second, points[j].first, points[j].second);
+                adj[j][i] = adj[i][j];
+                
+                if (i == j)
+                {
+                    adj[i][j] = -1;
+                }
+                if (i<num_of_vehicles && j< num_of_vehicles && i!= j)
+                {
+                    adj[i][j] = INT_MAX;
+                    adj[j][i] = adj[i][j];
+                    
+                }
+                
+                
+            }
+        }
+        
+//        for (int i = 0; i<(num_of_points+num_of_vehicles-1); i++)
+//        {
+//            for(int j = 0; j<(num_of_points+num_of_vehicles-1); j++)
+//            {
+//                cout<<adj[i][j]<< " ";
+//            }
+//            cout<<endl;
+//        }
+        
+        float distance = tsp_modified(adj, capacity, demand, num_of_vehicles, num_of_points);
+        cout<<distance<<endl;
 }
-
+}
