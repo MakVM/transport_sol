@@ -97,7 +97,8 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             min = adj[i][nextmarked];
             road[counter] = nextmarked + 1;
             nextmarked++;
-            //cout<<"marked: "<<nextmarked<<endl;
+            cout<<"vehicles:"<<num_of_vehicles<<endl;
+            cout<<"marked: "<<nextmarked<<endl;
         }//one
         
         //CHECK all paths
@@ -166,6 +167,7 @@ int main() {
     float res;
     float my_res = 0;
 
+    int help=0;
     int file_counter = 0;
     for(std::string line; getline( MV_data, line );)
     {
@@ -249,7 +251,7 @@ int main() {
                 }
                 
                 float distance = tsp_modified(adj, capacity, demand, num_of_vehicles, num_of_points);
-                cout<<distance<<endl;
+                //cout<<distance<<endl;
                 my_res = distance;
 
             } //ENDS here
@@ -273,6 +275,12 @@ int main() {
             float dev = (my_res - res)/res * 100;
             data<<dev;
             data <<"\n";
+            
+            if(dev<23)
+            {
+                //cout<<num_of_points<<endl;
+                help++;
+            }
         }
 
 
@@ -283,6 +291,7 @@ int main() {
 
     data.close();
     cout<<"nice"<<endl;
+    cout<<"i am good in "<< help<< " tests out of "<< file_counter<<endl;
 
     return 0;
 }
