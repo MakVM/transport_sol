@@ -616,15 +616,15 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     int j = 0, i = 0;
     float min = INT_MAX;
     map<float, float> visited; //index of vertex, visited?
-    //map<int, int> marked;
+    map<int, int> marked;
     int cur_cap = 0;
     int nextmarked = 1;
     
-//    for (int i = 0; i<num_of_vehicles; i++)
-//    {
-//        //fill marked with size of vehicle
-//        marked[i] = 1;
-//    }
+    for (int i = 0; i<num_of_vehicles; i++)
+    {
+        //fill marked with size of vehicle
+        marked[i] = 1;
+    }
         
         
     //START
@@ -643,34 +643,79 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
         }
         if (external == num_of_vertices - 1) //now we only need the vehicles
         {
-            break;external++;
+            break;
         }
  
-        //PATH unvisited and min distance
-        if (j != i && (visited[j] == 0))
+        //GOING THROUGH ALL EXTERIOR options first
+        if (j != i && (visited[j] == 0) && !marked[j]) //if the next vertex is external
         {
             if (adj[i][j] < min)
             {
-                if(cur_cap
-                   + demand[j] <= capacity)
+                if(cur_cap + demand[j] <= capacity) //we take it
                 {
-                    min = adj[i][j];
-                    road[counter] = j + 1;
+                    external++;
+                    cur_cap = cur_cap +demand[j];
                     
+                    
+                    min = adj[i][j];
+                    road[counter] = j + 1; //the num of column??
                 }
-                else //we have to go back home
+//                else //we HAVE to go back home
+//                {
+//                    min = adj[i][nextmarked];
+//                    road[counter] = nextmarked + 1;
+//                    nextmarked++;
+//                    cur_cap = 0;
+//                    j = adj[i].size();
+//                }
+            
+            }
+        
+        }
+        j++;
+        //finished all EXT
+        
+        //now, decide wether we need to go back home
+        j=0;
+        while (j<adj[i].size())
+        {
+            if (j != i && (visited[j] == 0) && marked[j]) //picking internal options
+            {
+                if (adj[i][j] < min) //min among external
                 {
-                    min = adj[i][nextmarked];
-                    road[counter] = nextmarked + 1;
-                    nextmarked++;
-                    cur_cap = 0;
-                    j = adj[i].size();
+                    if(cur_cap + demand[j] <= capacity) //we go back home
+                    {
+                        cur_cap = 0;
+                        min =adj[i][j];
+//                        j= nextmarked;
+                        road[counter] = nextmarked + 1;
+                        nextmarked++;
+                        j = adj[i].size()-1;
+                        
+//                        min = adj[i][nextmarked];
+//                        road[counter] = nextmarked + 1;
+//                        nextmarked++;
+//                        cur_cap = 0;
+//                        j = adj[i].size();
+//
+//
+//                        if (marked[j]) //we want to go back to the salon
+//                            {
+//                                cur_cap = 0;
+//                                min =adj[i][j];
+//                                j= nextmarked;
+//                                road[counter] = nextmarked + 1;
+//                                nextmarked++;
+//                            }
+                        
+                    }
+                
                 }
             
             }
+            j++;
         }
-        j++; //move to the next column (to the next vertex from cur)
- 
+        
         
         //CHECK all paths
         if (j == adj[i].size()) //got to the last vertex reachable from cur
@@ -678,27 +723,43 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             sum += min; //picked the min road
             min = INT_MAX; //go back to this
             
+            cout<<"now: "<< i<<endl;
+            cout<<"next: "<<road[counter]<<endl;
+            
             visited[road[counter] - 1] = 1;
             
             j = 0;
             i = road[counter] - 1;
             counter++;
         }
-        cout<<i<<" "<< j<<endl;
+        
+        //cout<<i<<" "<< j<<endl;
         
     }
     
  
     //WHILE cycle done, now we go back to the start
-    i = road[counter - 1] - 1;
-    for (j = 0; j < adj.size(); j++)
+    //i = road[counter - 1] - 1;
+    //    for (j = 0; j < adj.size(); j++)
+    //    {
+    //        if ((i != j) && adj[i][j] < min)
+    //        {
+    //            min = adj[i][j];
+    //            road[counter] = j + 1;
+    //        }
+    //    }
+    //finished
+    
+    if (external == num_of_vertices - 1)
     {
-        if ((i != j) && adj[i][j] < min)
-        {
-            min = adj[i][j];
-            road[counter] = j + 1;
-        }
+        min = adj[i][nextmarked];
+        
     }
+    else
+    {
+        cout<<"smth went wrong"<<endl;
+    }
+//
     
     sum += min;
  
