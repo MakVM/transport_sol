@@ -632,36 +632,43 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     visited[0] = 1;
     int road[adj.size()];
     int external = 0;
- 
+    int det = 0; //WE CHOSE external (or did we?)
+    
+    
     // Traverse the adjacency
-    while (i < adj.size() && j < adj[i].size())
+    //while (i < adj.size() && j < adj[i].size())
+    while(external < num_of_vertices - 1)
     {
  
         //matrix ended
-        if (counter >= adj[i].size() - 1)
+        if (counter >= adj[i].size())
+        //if (counter >= adj[i].size()-1)
         {
             break;
         }
-        if (external == num_of_vertices - 1) //now we only need the vehicles
-        {
-            break;
-        }
+//        if (external == num_of_vertices - 1) //now we only need the vehicles
+//        {
+//            break;
+//        }
  
+        
         //GOING THROUGH ALL EXTERIOR options first
         if (j != i && (visited[j] == 0) && !marked[j]) //if the next vertex is external
         {
             if (adj[i][j] < min)
             {
+                cout<<"yes!"<<endl;
                 if(cur_cap + demand[j] <= capacity) //we take it
                 {
                     //only do this when u're sure that it is chosen
 //                    external++;
 //                    cur_cap = cur_cap +demand[j];
                     
-                    cout<<"!"<<endl;
-                    
+                   //cout<<"!"<<endl;
+                    cout<<"uhu!"<<endl;
                     min = adj[i][j];
                     road[counter] = j + 1; //the num of column??
+                    det = 1; //we chose at least one external
                 }
 
             
@@ -671,37 +678,40 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
         j++;
         //finished all EXT
         
-        int det = 1; //WE CHOSE external
+       
         if (j == adj[i].size())
         {//one
-            
             //now, decide wether we need to go back home
             j=0;
             while (j<adj[i].size())
             {
-                if (j != i && (visited[j] == 0) && marked[j]) //picking internal options
+//                if (j != i && (visited[j] == 0) && marked[j]) //picking internal options
+                if (j != i && marked[j])
                 {
                     if (adj[i][j] < min) //min among external
                     {
+                        cout<<"yes2!"<<endl;
                         if(cur_cap + demand[j] <= capacity) //we go back home
                         {
+                            cout<<"YAS!"<<endl;
                             cur_cap = 0;
                             min =adj[i][j];
                             road[counter] = nextmarked + 1;
                             nextmarked++;
                             j = adj[i].size()-1;
                             det = 0; //we did not chose external
-                            cout<<"!"<<endl;
+                            //cout<<"!"<<endl;
+                            cout<<"marked: "<<nextmarked<<endl;
                             
                         }
                     
                     }
                 
                 }
+                
                 j++;
-            }
+            }//end while
         }//one
-        
         
         //CHECK all paths
         if (j == adj[i].size()) //got to the last vertex reachable from cur
@@ -712,12 +722,13 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             cout<<"now: "<< i<<endl;
             cout<<"next: "<<road[counter]-1<<endl;
             
+            
             visited[road[counter] - 1] = 1;
             
             if(det) //even after going through the internal cycle, we still chose ext
             {
                 external++;
-                cout<<road[counter] - 1<<endl;
+                cout<<"EXT:"<<external<<endl;
                 cur_cap = cur_cap + demand[road[counter] - 1];
             }
             
@@ -742,6 +753,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     //    }
     //finished
     
+    cout<<"woop"<<endl;
     if (external == num_of_vertices - 1)
     {
         min = adj[i][nextmarked];
@@ -749,6 +761,8 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     }
     else
     {
+        cout<<external<<endl;
+        cout<<num_of_vertices-1<<endl;
         cout<<"smth went wrong"<<endl;
     }
 //
