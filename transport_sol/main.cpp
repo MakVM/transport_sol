@@ -615,8 +615,9 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     int counter = 0;
     int j = 0, i = 0;
     float min = INT_MAX;
-    map<float, float> visited; //index of vertex, visited?
-    map<int, int> marked;
+    //map<float, float> visited; //index of vertex, visited?
+    vector<int> visited(demand.size(),0);
+    vector<int> marked(demand.size(),0);
     int cur_cap = 0;
     int nextmarked = 1;
     
@@ -653,21 +654,16 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             {
                 if(cur_cap + demand[j] <= capacity) //we take it
                 {
-                    external++;
-                    cur_cap = cur_cap +demand[j];
+                    //only do this when u're sure that it is chosen
+//                    external++;
+//                    cur_cap = cur_cap +demand[j];
                     
+                    cout<<"!"<<endl;
                     
                     min = adj[i][j];
                     road[counter] = j + 1; //the num of column??
                 }
-//                else //we HAVE to go back home
-//                {
-//                    min = adj[i][nextmarked];
-//                    road[counter] = nextmarked + 1;
-//                    nextmarked++;
-//                    cur_cap = 0;
-//                    j = adj[i].size();
-//                }
+
             
             }
         
@@ -675,46 +671,36 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
         j++;
         //finished all EXT
         
-        //now, decide wether we need to go back home
-        j=0;
-        while (j<adj[i].size())
-        {
-            if (j != i && (visited[j] == 0) && marked[j]) //picking internal options
+        int det = 1; //WE CHOSE external
+        if (j == adj[i].size())
+        {//one
+            
+            //now, decide wether we need to go back home
+            j=0;
+            while (j<adj[i].size())
             {
-                if (adj[i][j] < min) //min among external
+                if (j != i && (visited[j] == 0) && marked[j]) //picking internal options
                 {
-                    if(cur_cap + demand[j] <= capacity) //we go back home
+                    if (adj[i][j] < min) //min among external
                     {
-                        cur_cap = 0;
-                        min =adj[i][j];
-//                        j= nextmarked;
-                        road[counter] = nextmarked + 1;
-                        nextmarked++;
-                        j = adj[i].size()-1;
-                        
-//                        min = adj[i][nextmarked];
-//                        road[counter] = nextmarked + 1;
-//                        nextmarked++;
-//                        cur_cap = 0;
-//                        j = adj[i].size();
-//
-//
-//                        if (marked[j]) //we want to go back to the salon
-//                            {
-//                                cur_cap = 0;
-//                                min =adj[i][j];
-//                                j= nextmarked;
-//                                road[counter] = nextmarked + 1;
-//                                nextmarked++;
-//                            }
-                        
+                        if(cur_cap + demand[j] <= capacity) //we go back home
+                        {
+                            cur_cap = 0;
+                            min =adj[i][j];
+                            road[counter] = nextmarked + 1;
+                            nextmarked++;
+                            j = adj[i].size()-1;
+                            det = 0; //we did not chose external
+                            cout<<"!"<<endl;
+                            
+                        }
+                    
                     }
                 
                 }
-            
+                j++;
             }
-            j++;
-        }
+        }//one
         
         
         //CHECK all paths
@@ -724,16 +710,22 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             min = INT_MAX; //go back to this
             
             cout<<"now: "<< i<<endl;
-            cout<<"next: "<<road[counter]<<endl;
+            cout<<"next: "<<road[counter]-1<<endl;
             
             visited[road[counter] - 1] = 1;
+            
+            if(det) //even after going through the internal cycle, we still chose ext
+            {
+                external++;
+                cout<<road[counter] - 1<<endl;
+                cur_cap = cur_cap + demand[road[counter] - 1];
+            }
             
             j = 0;
             i = road[counter] - 1;
             counter++;
         }
         
-        //cout<<i<<" "<< j<<endl;
         
     }
     
@@ -934,9 +926,9 @@ int main(){
         
         for(int i = 0; i<num_of_points-1;i++)
         {
+            cin>>d;
             cin>> x;
             cin>> y;
-            cin>>d;
             points.push_back(pair<float, float> (x,y));
             demand.push_back(d);
         }
