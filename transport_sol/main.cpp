@@ -657,7 +657,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
         {
             if (adj[i][j] < min)
             {
-                cout<<"yes!"<<endl;
+                //cout<<"yes!"<<endl;
                 if(cur_cap + demand[j] <= capacity) //we take it
                 {
                     //only do this when u're sure that it is chosen
@@ -665,7 +665,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
 //                    cur_cap = cur_cap +demand[j];
                     
                    //cout<<"!"<<endl;
-                    cout<<"uhu!"<<endl;
+                    //cout<<"uhu!"<<endl;
                     min = adj[i][j];
                     road[counter] = j + 1; //the num of column??
                     det = 1; //we chose at least one external
@@ -684,7 +684,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             min = adj[i][nextmarked];
             road[counter] = nextmarked + 1;
             nextmarked++;
-            cout<<"marked: "<<nextmarked<<endl;
+            //cout<<"marked: "<<nextmarked<<endl;
         }//one
         
         //CHECK all paths
@@ -728,7 +728,7 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     //    }
     //finished
     
-    cout<<"woop"<<endl;
+    //cout<<"woop"<<endl;
     if (external == num_of_vertices - 1)
     {
         min = adj[i][nextmarked];
@@ -736,8 +736,8 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
     }
     else
     {
-        cout<<external<<endl;
-        cout<<num_of_vertices-1<<endl;
+//        cout<<external<<endl;
+//        cout<<num_of_vertices-1<<endl;
         cout<<"smth went wrong"<<endl;
     }
 //
