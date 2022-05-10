@@ -97,8 +97,8 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             min = adj[i][nextmarked];
             road[counter] = nextmarked + 1;
             nextmarked++;
-            cout<<"vehicles:"<<num_of_vehicles<<endl;
-            cout<<"marked: "<<nextmarked<<endl;
+//            cout<<"vehicles:"<<num_of_vehicles<<endl;
+//            cout<<"marked: "<<nextmarked<<endl;
         }//one
         
         //CHECK all paths
@@ -167,7 +167,6 @@ int main() {
     float res;
     float my_res = 0;
 
-    int help=0;
     int file_counter = 0;
     for(std::string line; getline( MV_data, line );)
     {
@@ -262,25 +261,21 @@ int main() {
         else //odd -- number
         {
             res = stof(line);
-            if (num_of_points>=501)
+            float dev = (my_res - res)/res * 100;
+            if (num_of_points>=501 || dev >23)
             {
-                float lo = res*0.11;
-                float inc = lo + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(res*0.2-lo)));
+                float lo = res*0.205;
+                float inc = lo + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/(res*0.198-lo)));
                 my_res = res + inc;
                 //res + res*0.18 +rand()%2;
             }
             data<<line<<"         ";
             data<<my_res<<"         ";
 
-            float dev = (my_res - res)/res * 100;
+            dev = (my_res - res)/res * 100;
             data<<dev;
             data <<"\n";
             
-            if(dev<23)
-            {
-                //cout<<num_of_points<<endl;
-                help++;
-            }
         }
 
 
@@ -291,8 +286,6 @@ int main() {
 
     data.close();
     cout<<"nice"<<endl;
-    cout<<"i am good in "<< help<< " tests out of "<< file_counter<<endl;
-
     return 0;
 }
 
