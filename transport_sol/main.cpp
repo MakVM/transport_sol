@@ -678,39 +678,13 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
         j++;
         //finished all EXT
         
-       
-        if (j == adj[i].size())
+        if (j == adj[i].size() && det == 0) //can't take any ext
         {//one
-            //now, decide wether we need to go back home
-            j=0;
-            while (j<adj[i].size())
-            {
-//                if (j != i && (visited[j] == 0) && marked[j]) //picking internal options
-                if (j != i && marked[j])
-                {
-                    if (adj[i][j] < min) //min among external
-                    {
-                        cout<<"yes2!"<<endl;
-                        if(cur_cap + demand[j] <= capacity) //we go back home
-                        {
-                            cout<<"YAS!"<<endl;
-                            cur_cap = 0;
-                            min =adj[i][j];
-                            road[counter] = nextmarked + 1;
-                            nextmarked++;
-                            j = adj[i].size()-1;
-                            det = 0; //we did not chose external
-                            //cout<<"!"<<endl;
-                            cout<<"marked: "<<nextmarked<<endl;
-                            
-                        }
-                    
-                    }
-                
-                }
-                
-                j++;
-            }//end while
+            cur_cap = 0;
+            min = adj[i][nextmarked];
+            road[counter] = nextmarked + 1;
+            nextmarked++;
+            cout<<"marked: "<<nextmarked<<endl;
         }//one
         
         //CHECK all paths
@@ -719,8 +693,8 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             sum += min; //picked the min road
             min = INT_MAX; //go back to this
             
-            cout<<"now: "<< i<<endl;
-            cout<<"next: "<<road[counter]-1<<endl;
+//            cout<<"now: "<< i<<endl;
+//            cout<<"next: "<<road[counter]-1<<endl;
             
             
             visited[road[counter] - 1] = 1;
@@ -728,8 +702,9 @@ float tsp_modified(vector<vector<float> > adj, int capacity, vector<int> demand,
             if(det) //even after going through the internal cycle, we still chose ext
             {
                 external++;
-                cout<<"EXT:"<<external<<endl;
+                //cout<<"EXT:"<<external<<endl;
                 cur_cap = cur_cap + demand[road[counter] - 1];
+                det = 0;
             }
             
             j = 0;
